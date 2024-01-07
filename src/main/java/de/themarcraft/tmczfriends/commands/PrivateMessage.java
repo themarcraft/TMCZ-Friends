@@ -1,0 +1,51 @@
+package de.themarcraft.tmczfriends.commands;
+
+import de.themarcraft.tmczfriends.Main;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Command;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Arrays;
+
+public class PrivateMessage extends Command {
+
+    Main plugin;
+
+    public PrivateMessage(Main plugin){
+        super("msg", "themarcraft.friends.msg", "dm", "pm", "message", "tell");
+        this.plugin = plugin;
+    }
+
+    @Override
+    public void execute(CommandSender commandSender, String[] args) {
+        if (!(commandSender instanceof ProxiedPlayer)){
+            plugin.log(plugin.getPlayerOnly());
+            return;
+        }
+        ProxiedPlayer player = (ProxiedPlayer) commandSender;
+        if (args.length==0){
+            plugin.playerSendFriendMessage(player, "&cBitte gebe einen Spieler an");
+        } else if (args.length==1) {
+            plugin.playerSendFriendMessage(player, "&cBitte gebe eine Nachricht an");
+        }else {
+            try {
+                ProxiedPlayer reciver = plugin.getProxy().getPlayer(args[0]);
+                String message = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+                PreparedStatement statement = plugin.database.getConnection().prepareStatement("INSERT `tmczFriendsMessages` SET `sender` = ?, `reciver` = ?, `msg` = ?;");
+                statement.setString(1, player.getDisplayName());
+                statement.setString(2, reciver.getDisplayName());
+                statement.setString(3, message);
+                statement.executeUpdate();
+                statement.close();
+                player.sendMessage(plugin.formatFriendsChat("Du", reciver.getDisplayName(), message));
+                reciver.sendMessage(plugin.formatFriendsChat(player.getDisplayName(), "Dir", message));
+            }catch (Exception e){
+                plugin.playerSendFriendMessage(player, "&cDer Spieler ist Offline");
+            }
+        }
+    }
+}
