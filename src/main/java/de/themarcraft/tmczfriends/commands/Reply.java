@@ -4,18 +4,21 @@ import de.themarcraft.tmczfriends.Main;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Reply extends Command {
 
     Main plugin;
 
     public Reply(Main plugin) {
-        super("reply", "themarcraft.friends.reply", "r", "rp", "antworten", "a");
+        super("reply", "themarcraft.friends.reply", "r", "rp", "antworten", "a", "tmcz-friends:r", "tmcz-friends:rp", "tmcz-friends:antworten", "tmcz-friends:a", "tmcz-friends:reply");
         this.plugin = plugin;
     }
 

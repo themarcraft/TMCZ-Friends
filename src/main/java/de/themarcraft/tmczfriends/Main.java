@@ -1,9 +1,11 @@
 package de.themarcraft.tmczfriends;
 
+import de.themarcraft.tmczfriends.commands.Friend;
 import de.themarcraft.tmczfriends.commands.PrivateMessage;
 import de.themarcraft.tmczfriends.commands.Reply;
 import de.themarcraft.tmczfriends.commands.ReplySettings;
 import de.themarcraft.tmczfriends.listener.Database;
+import de.themarcraft.tmczfriends.listener.PlayerListener;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -13,6 +15,8 @@ import java.sql.SQLException;
 public final class Main extends Plugin {
 
     public Database database;
+
+    public Friend friend = new Friend(this);
 
     @Override
     public void onEnable() {
@@ -31,6 +35,11 @@ public final class Main extends Plugin {
         getProxy().getPluginManager().registerCommand(this, new PrivateMessage(this));
         getProxy().getPluginManager().registerCommand(this, new Reply(this));
         getProxy().getPluginManager().registerCommand(this, new ReplySettings(this));
+        getProxy().getPluginManager().registerCommand(this, friend);
+
+        getProxy().getPluginManager().registerListener(this, new PlayerListener(this));
+
+        getProxy().registerChannel("tmcz:friends");
     }
 
     @Override
