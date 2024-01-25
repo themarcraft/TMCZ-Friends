@@ -10,7 +10,6 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Content;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
@@ -20,6 +19,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * Freunde und eine gro&szlig;e Anzahl an weiteren Funktionen
+ * Hinzuf&uuml;gen- und Entfernen- von Freunden, Befehl, TabCompleter, etc.
+ */
 
 public class Friend extends Command implements TabExecutor {
 
@@ -63,6 +67,7 @@ public class Friend extends Command implements TabExecutor {
                 }
             }
             out.writeUTF(onlineFriends);
+            out.writeUTF(getMax(player.getDisplayName()) + "");
             player.getServer().sendData("tmcz:friends", out.toByteArray());
             return;
         }
@@ -136,7 +141,7 @@ public class Friend extends Command implements TabExecutor {
     }
 
     /**
-     * Hilfemenü
+     * Hilfemen&uuml;
      *
      * @param player wird das Hilfemenü gesendet
      */
@@ -163,7 +168,12 @@ public class Friend extends Command implements TabExecutor {
     public boolean sendRequest(String player, String name) {
         try {
             ProxiedPlayer send = plugin.getProxy().getPlayer(player);
-            if (!isFriend(player, name) || !isMax(player)) {
+            plugin.log(isMax(player) + " Spieler: " + player);
+            if (isMax(player)) {
+                plugin.playerSendFriendMessage(send, "§cDu hast das Freunde Limit erreicht!");
+                return false;
+            }
+            if (!isFriend(player, name)) {
                 if (isRequest(name, player) == 0) {
                     PreparedStatement save = plugin.database.getConnection().prepareStatement("INSERT INTO `tmczFriendsRequests` (`player`, `reciver`) VALUES (?, ?);");
                     save.setString(1, player);
@@ -216,9 +226,9 @@ public class Friend extends Command implements TabExecutor {
     }
 
     /**
-     * Hinzufügen eines Freundes
+     * Hinzuf&uuml;gen eines Freundes
      *
-     * @param player Spieler, dem ein Freund hinzugefügt wird
+     * @param player Spieler, dem ein Freund hinzugef&uuml;gt wird
      * @param name   Hinzugefügter Freund
      * @return false wenn es fehler gab, sonst true
      */
@@ -249,7 +259,7 @@ public class Friend extends Command implements TabExecutor {
     }
 
     /**
-     * Freundschafts-Anfrage löschen
+     * Freundschafts-Anfrage l&ouml;schen
      *
      * @param player Spieler, der die Anfrage gesendet hat
      * @param name   Spieler, der die Anfrage bekommen würde
@@ -301,7 +311,7 @@ public class Friend extends Command implements TabExecutor {
     }
 
     /**
-     * Prüft ob der Spieler eine Freundschafts-Anfrage von einem Spieler bekommen hat
+     * Pr&uuml;ft ob der Spieler eine Freundschafts-Anfrage von einem Spieler bekommen hat
      *
      * @param player Spieler, der die Freundschafts-Anfrage bekommen haben soll
      * @param name   Spieler, der die Freundschafts-Anfrage gesendet haben soll
@@ -344,9 +354,9 @@ public class Friend extends Command implements TabExecutor {
     }
 
     /**
-     * Überprüft, ob der Spieler einen bestimmten Freund hat
+     * &Uuml;berprüft, ob der Spieler einen bestimmten Freund hat
      *
-     * @param player Spieler, der überprüft wird
+     * @param player Spieler, der &uuml;berprüft wird
      * @param name   Spieler, der der Freund sein soll
      * @return false wenn es fehler gab, sonst true
      */
@@ -419,15 +429,36 @@ public class Friend extends Command implements TabExecutor {
     /**
      * Schaut, ob der Spieler bereits das maximum an Freunden erreicht hat
      *
-     * @param player Spieler, der überprüft wird
+     * @param player Spieler, der &uuml;berpr&uuml;ft wird
      * @return true, wenn der spieler zu viele Freunde hat, sonst false
      */
     public boolean isMax(String player) {
-        if (getFriends(player).split(",").length == 28) {
+
+        if (getFriends(player).split(",").length >= getMax(player)) {
             return true;
         } else {
             return false;
         }
+    }
+
+    /**
+     * Hole die maximale Anzahl eines Spielers
+     *
+     * @param player Spieler, der &uuml;berpr&uuml;ft wird
+     * @return gibt den Wert anhand der Permission wieder
+     */
+    public int getMax(String player) {
+        int max = 28;
+        int i = 1000;
+        while (i > 0) {
+            if (plugin.getProxy().getPlayer(player).hasPermission("themarcraft.friends." + i)) {
+                max = i;
+                break;
+            } else {
+                i--;
+            }
+        }
+        return max;
     }
 
     @Override

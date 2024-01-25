@@ -12,6 +12,13 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 import java.sql.SQLException;
 
+/**
+ * Main Klasse des Plugins. Dies Enthält viele Funktionen, die man h&auml;ufiger mal braucht und registriert auch Befehle und Listener
+ *
+ * @author Marvin Niermann
+ * @version 1.0-Snapshot
+ */
+
 public final class Main extends Plugin {
 
     public Database database;
