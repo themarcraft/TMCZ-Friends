@@ -1,7 +1,5 @@
 package de.themarcraft.tmczfriends.commands;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import de.themarcraft.tmczfriends.Main;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
@@ -42,6 +40,10 @@ public class Friend extends Command implements TabExecutor {
         }
         ProxiedPlayer player = (ProxiedPlayer) commandSender;
         if (args.length == 0) {
+            if (plugin.configuration.getBoolean("config.addon.gui")) {
+                plugin.pluginMessanger.sendPluginMesssage("friendui", player.getDisplayName());
+                return;
+            }
             plugin.playerSendMessage(player, "§8§m･････････････････････････････････････････････････････････････････････････････････････････････････････");
             plugin.playerSendMessage(player, ChatColor.GRAY + plugin.getDescription().getName());
             plugin.playerSendMessage(player, "");
@@ -50,25 +52,6 @@ public class Friend extends Command implements TabExecutor {
             plugin.playerSendMessage(player, ChatColor.GRAY + "Version: " + ChatColor.AQUA + plugin.getDescription().getVersion());
             plugin.playerSendMessage(player, "§8§m･････････････････････････････････････････････････････････････････････････････････････････････････････");
 
-            ByteArrayDataOutput out = ByteStreams.newDataOutput();
-            out.writeUTF("friendui");
-            out.writeUTF(getFriends(player.getDisplayName()));
-            String numberFriends;
-            if (getFriends(player.getDisplayName()).contains(",")) {
-                numberFriends = String.valueOf(getFriends(player.getDisplayName()).split(",").length);
-            } else {
-                numberFriends = "0";
-            }
-            out.writeUTF(numberFriends);
-            String onlineFriends = "";
-            for (ProxiedPlayer online : plugin.getProxy().getPlayers()) {
-                if (isFriend(player.getDisplayName(), online.getDisplayName())) {
-                    onlineFriends = onlineFriends + online.getDisplayName() + ",";
-                }
-            }
-            out.writeUTF(onlineFriends);
-            out.writeUTF(getMax(player.getDisplayName()) + "");
-            player.getServer().sendData("tmcz:friends", out.toByteArray());
             return;
         }
         switch (args[0]) {
@@ -94,6 +77,10 @@ public class Friend extends Command implements TabExecutor {
                 break;
             case "requests":
             case "anfragen":
+                if (plugin.configuration.getBoolean("config.addon.gui")) {
+                    plugin.pluginMessanger.sendPluginMesssage("requestui", player.getDisplayName());
+                    return;
+                }
                 String[] requests = getRequests(player.getDisplayName()).split(",");
                 plugin.playerSendFriendMessage(player, "Offene Freundschafts-Anfragen:");
                 for (String s : requests) {
@@ -102,6 +89,10 @@ public class Friend extends Command implements TabExecutor {
                 break;
             case "accept":
             case "annehmen":
+                if (args.length != 2) {
+                    plugin.playerSendFriendMessage(player, plugin.database.getInvalidPlayer());
+                    break;
+                }
                 if (isRequest(player.getDisplayName(), args[1]) == 1) {
                     refuse(player.getDisplayName(), args[1]);
                     add(player.getDisplayName(), args[1]);
@@ -115,6 +106,10 @@ public class Friend extends Command implements TabExecutor {
                 break;
             case "friends":
             case "freunde":
+                if (plugin.configuration.getBoolean("config.addon.gui")) {
+                    plugin.pluginMessanger.sendPluginMesssage("friendui", player.getDisplayName());
+                    return;
+                }
                 plugin.playerSendFriendMessage(player, "Deine Freunde:");
                 String[] freunde = getFriends(player.getDisplayName()).split(",");
                 for (String s : freunde) {
@@ -135,6 +130,144 @@ public class Friend extends Command implements TabExecutor {
             case "help":
                 sendHelp(player);
                 break;
+            case "info":
+                plugin.playerSendMessage(player, "§8§m･････････････････････････････････････････････････････････････････････････････････････････････････････");
+                plugin.playerSendMessage(player, ChatColor.GRAY + plugin.getDescription().getName());
+                plugin.playerSendMessage(player, "");
+                plugin.playerSendMessage(player, ChatColor.GRAY + "/freunde hilfe");
+                plugin.playerSendMessage(player, "");
+                plugin.playerSendMessage(player, ChatColor.GRAY + "Version: " + ChatColor.AQUA + plugin.getDescription().getVersion());
+                plugin.playerSendMessage(player, "§8§m･････････････････････････････････････････････････････････････････････････････････････････････････････");
+                break;
+            case "settings":
+            case "einstellungen":
+                if (plugin.configuration.getBoolean("config.addon.gui") && args.length == 1) {
+                    plugin.pluginMessanger.sendPluginMesssage("settingsui", player.getDisplayName());
+                    return;
+                }
+                if (args.length == 1) {
+                    plugin.playerSendFriendMessage(player, "Verfügbare Einstellungen:");
+                    plugin.playerSendFriendMessage(player, "/freunde einstellungen antworten");
+                    plugin.playerSendFriendMessage(player, "/freunde einstellungen msg");
+                    plugin.playerSendFriendMessage(player, "/freunde einstellungen freundeOnline");
+                    plugin.playerSendFriendMessage(player, "/freunde einstellungen freundeServerWechsel");
+                    return;
+                }
+                switch (args[1]) {
+                    case "antworten":
+                    case "reply":
+                        if (args.length >= 3)
+                            switch (args[2]) {
+                                case "1":
+                                    plugin.database.setReplyType(player.getDisplayName(), false);
+                                    plugin.playerSendFriendMessage(player, "Du Sendest mit /r nun Nachrichten an die Person, der du zuletzt geschrieben hast");
+                                    break;
+                                case "2":
+                                    plugin.database.setReplyType(player.getDisplayName(), true);
+                                    plugin.playerSendFriendMessage(player, "Du Sendest mit /r nun Nachrichten an die Person, die dir zuletzt geschrieben hat");
+                                    break;
+                                default:
+                                    plugin.playerSendFriendMessage(player, "Antworten auf Private Nachrichten (/r)");
+                                    plugin.playerSendFriendMessage(player, "1 = Antworte auf einkommende Nachrichten");
+                                    plugin.playerSendFriendMessage(player, "2 = Sende Nachricht an letzte Person, der du geschrieben hast");
+                                    break;
+                            }
+                        else {
+                            plugin.playerSendFriendMessage(player, "Antworten auf Private Nachrichten (/r)");
+                            plugin.playerSendFriendMessage(player, "1 = Antworte auf einkommende Nachrichten");
+                            plugin.playerSendFriendMessage(player, "2 = Sende Nachricht an letzte Person, der du geschrieben hast");
+                        }
+                        break;
+                    case "msg":
+                    case "nachrichten":
+                    case "dm":
+                        if (args.length >= 3)
+                            switch (args[2]) {
+                                case "aus":
+                                    plugin.database.setMessageSetting(player.getDisplayName(), 0);
+                                    plugin.playerSendFriendMessage(player, "Du kriegst nun keine Privaten Nachrichten mehr");
+                                    break;
+                                case "freunde":
+                                    plugin.database.setMessageSetting(player.getDisplayName(), 1);
+                                    plugin.playerSendFriendMessage(player, "Nur Freunde können dir jetzt Private Nachrichten senden");
+                                    break;
+                                case "alle":
+                                    plugin.database.setMessageSetting(player.getDisplayName(), 2);
+                                    plugin.playerSendFriendMessage(player, "Jeder kann dir jetzt private Nachrichten senden");
+                                    break;
+                                default:
+                                    plugin.playerSendFriendMessage(player, "Private Nachrichten (/msg)");
+                                    plugin.playerSendFriendMessage(player, "aus = Keiner kann dir Private Nachrichten schicken");
+                                    plugin.playerSendFriendMessage(player, "freunde = Nur Freunde können dir Private Nachrichten schicken");
+                                    plugin.playerSendFriendMessage(player, "alle = Jeder kann dir Private Nachrichten schicken");
+                                    break;
+                            }
+                        else {
+                            plugin.playerSendFriendMessage(player, "Private Nachrichten (/msg)");
+                            plugin.playerSendFriendMessage(player, "aus = Keiner kann dir Private Nachrichten schicken");
+                            plugin.playerSendFriendMessage(player, "freunde = Nur Freunde können dir Private Nachrichten schicken");
+                            plugin.playerSendFriendMessage(player, "alle = Jeder kann dir Private Nachrichten schicken");
+                        }
+                        break;
+                    case "freundeOnline":
+                    case "friendsOnline":
+                    case "online":
+                        if (args.length >= 3)
+                            switch (args[2]) {
+                                case "aus":
+                                    plugin.database.setFriendJoinSetting(player.getDisplayName(), false);
+                                    plugin.playerSendFriendMessage(player, "Du kriegst nun keine Benachrichtigung mehr, wenn deine Freunde Online sind");
+                                    break;
+                                case "an":
+                                    plugin.database.setFriendJoinSetting(player.getDisplayName(), true);
+                                    plugin.playerSendFriendMessage(player, "Du kriegst nun Benachrichtigungen, wenn deine Freunde Online sind");
+                                    break;
+                                default:
+                                    plugin.playerSendFriendMessage(player, "Benachrichtigung - Wenn deine Freunde Online gehen");
+                                    plugin.playerSendFriendMessage(player, "aus = Du kriegst Benachrichtigungen, wenn deine Freunde Online gehen");
+                                    plugin.playerSendFriendMessage(player, "an = Du kriegst keine Benachrichtigungen, wenn deine Freunde Online gehen");
+                                    break;
+                            }
+                        else {
+                            plugin.playerSendFriendMessage(player, "Benachrichtigung - Wenn deine Freunde Online gehen");
+                            plugin.playerSendFriendMessage(player, "aus = Du kriegst Benachrichtigungen, wenn deine Freunde Online gehen");
+                            plugin.playerSendFriendMessage(player, "an = Du kriegst keine Benachrichtigungen, wenn deine Freunde Online gehen");
+                        }
+                        break;
+                    case "freundeServerWechsel":
+                    case "serverwechsel":
+                    case "switch":
+                    case "serverSwitch":
+                        if (args.length >= 3)
+                            switch (args[2]) {
+                                case "aus":
+                                    plugin.database.setFriendSwitchSetting(player.getDisplayName(), false);
+                                    plugin.playerSendFriendMessage(player, "Du kriegst nun keine Benachrichtigung mehr, wenn deine Freunde die Server wechseln");
+                                    break;
+                                case "an":
+                                    plugin.database.setFriendSwitchSetting(player.getDisplayName(), true);
+                                    plugin.playerSendFriendMessage(player, "Du kriegst nun Benachrichtigungen, wenn deine Freunde die Server wechseln");
+                                    break;
+                                default:
+                                    plugin.playerSendFriendMessage(player, "Benachrichtigung - Wenn deine Freunde Online gehen");
+                                    plugin.playerSendFriendMessage(player, "aus = Du kriegst Benachrichtigungen, wenn deine Freunde die Server wechseln");
+                                    plugin.playerSendFriendMessage(player, "an = Du kriegst keine Benachrichtigungen, wenn deine Freunde die Server wechseln");
+                                    break;
+                            }
+                        else {
+                            plugin.playerSendFriendMessage(player, "Benachrichtigung - Wenn deine Freunde Online gehen");
+                            plugin.playerSendFriendMessage(player, "aus = Du kriegst Benachrichtigungen, wenn deine Freunde die Server wechseln");
+                            plugin.playerSendFriendMessage(player, "an = Du kriegst keine Benachrichtigungen, wenn deine Freunde die Server wechseln");
+                        }
+                        break;
+                    default:
+                        plugin.playerSendFriendMessage(player, "Verfügbare Einstellungen:");
+                        plugin.playerSendFriendMessage(player, "/freunde einstellungen antworten");
+                        plugin.playerSendFriendMessage(player, "/freunde einstellungen msg");
+                        plugin.playerSendFriendMessage(player, "/freunde einstellungen freundeOnline");
+                        plugin.playerSendFriendMessage(player, "/freunde einstellungen freundeServerWechsel");
+                }
+                break;
             default:
                 plugin.playerSendFriendMessage(player, "§cDiesen Befehl gibt es nicht");
         }
@@ -154,7 +287,7 @@ public class Friend extends Command implements TabExecutor {
         plugin.playerSendFriendMessage(player, "/freunde entfernen <name> §8| §7Löst die Freundschaft mit einem Spieler auf");
         plugin.playerSendFriendMessage(player, "/freunde aktzeptieren <name> §8| §7Aktzeptiere die Freundschafts-Anfrage von dem Spieler");
         plugin.playerSendFriendMessage(player, "/freunde ablehnen <name> §8| §7Lehnt die Freundschafts-Anfrage eines Spielers ab");
-        plugin.playerSendFriendMessage(player, "/freunde privatsphäte §8| §7Öffnet die Privatsphären Einstellungen");
+        plugin.playerSendFriendMessage(player, "/freunde einstellungen §8| §7Ändere deine Einstellungen");
     }
 
     /**
@@ -168,7 +301,7 @@ public class Friend extends Command implements TabExecutor {
     public boolean sendRequest(String player, String name) {
         try {
             ProxiedPlayer send = plugin.getProxy().getPlayer(player);
-            plugin.log(isMax(player) + " Spieler: " + player);
+            //plugin.log(isMax(player) + " Spieler: " + player);
             if (isMax(player)) {
                 plugin.playerSendFriendMessage(send, "§cDu hast das Freunde Limit erreicht!");
                 return false;
@@ -242,8 +375,12 @@ public class Friend extends Command implements TabExecutor {
                 add.executeUpdate();
                 add.close();
                 if (!isFriend(name, player)) {
-                    refuse(player, name);
-                    refuse(name, player);
+                    try {
+                        refuse(player, name);
+                        refuse(name, player);
+                    } catch (Exception e) {
+
+                    }
                     add(name, player);
                 }
 
@@ -392,6 +529,31 @@ public class Friend extends Command implements TabExecutor {
     }
 
     /**
+     * Freundschafts-Anfragen eines Spielers
+     *
+     * @param player Freundschafts-Anfragen werden von dem Spieler abgefragt
+     * @return Zahl der offenen Freundschafts-Anfragen
+     */
+    public int getRequestsInt(String player) {
+        try {
+            PreparedStatement statement = plugin.database.getConnection().prepareStatement("SELECT * FROM tmczFriendsRequests WHERE reciver = ?;");
+            statement.setString(1, player);
+
+            ResultSet resultSet = statement.executeQuery();
+            int result = 0;
+            while (resultSet.next()) {
+                result++;
+            }
+            //plugin.log(String.valueOf(result));
+            return result;
+        } catch (SQLException e) {
+            //plugin.log(String.valueOf(0));
+            //plugin.log(e.getMessage());
+            return 0;
+        }
+    }
+
+    /**
      * Entfernen eines Freundes
      *
      * @param player Spieler, dem der Freund entfernt wird
@@ -421,7 +583,8 @@ public class Friend extends Command implements TabExecutor {
                 return true;
             } catch (SQLException e) {
                 plugin.log(e.getMessage());
-                return false;
+                throw new RuntimeException(e);
+                //return false;
             }
         }
     }
@@ -449,14 +612,21 @@ public class Friend extends Command implements TabExecutor {
      */
     public int getMax(String player) {
         int max = 28;
-        int i = 1000;
+        int i = 1008;
         while (i > 0) {
-            if (plugin.getProxy().getPlayer(player).hasPermission("themarcraft.friends." + i)) {
-                max = i;
+            try {
+                if (plugin.getProxy().getPlayer(player).hasPermission("themarcraft.friends." + i)) {
+                    max = i;
+                    break;
+                } else {
+                    i--;
+                }
+            } catch (Exception e) {
                 break;
-            } else {
-                i--;
             }
+        }
+        if (i == 1) {
+            max = 20;
         }
         return max;
     }
@@ -466,6 +636,7 @@ public class Friend extends Command implements TabExecutor {
         ProxiedPlayer player = (ProxiedPlayer) commandSender;
         List<String> result = new ArrayList<>();
         List<String> args1 = new ArrayList<>();
+        List<String> settings = new ArrayList<>();
 
         try {
             args1.add("hinzufügen");
@@ -475,6 +646,12 @@ public class Friend extends Command implements TabExecutor {
             args1.add("anfragen");
             args1.add("freunde");
             args1.add("hilfe");
+            args1.add("einstellungen");
+            args1.add("info");
+            settings.add("antworten");
+            settings.add("msg");
+            settings.add("freundeOnline");
+            settings.add("freundeServerWechsel");
 
             if (args.length == 1) {
                 if (args[0].isEmpty()) {
@@ -486,7 +663,7 @@ public class Friend extends Command implements TabExecutor {
                         }
                     }
                 }
-            } else if (args.length == 2) {
+            } else if (args.length >= 2) {
                 switch (args[0]) {
                     case "hilfe":
                     case "help":
@@ -515,11 +692,61 @@ public class Friend extends Command implements TabExecutor {
                             result.add(s);
                         }
                         break;
+                    case "einstellungen":
+                    case "settings":
+                        if (args.length == 2) {
+                            for (String s : settings) {
+                                if (s.contains(args[1])) {
+                                    result.add(s);
+                                }
+                            }
+                        }
+                        if (args.length == 3) {
+                            switch (args[1]) {
+                                case "antworten":
+                                    result.add("1");
+                                    result.add("2");
+                                    break;
+                                case "msg":
+                                    result.add("aus");
+                                    result.add("freunde");
+                                    result.add("alle");
+                                    break;
+                                case "freundeOnline":
+                                case "freundeServerWechsel":
+                                    result.add("an");
+                                    result.add("aus");
+                                    break;
+                            }
+                        }
+                        break;
                 }
             }
         } catch (Exception e) {
-            plugin.log(e.getMessage());
+            //plugin.log(e.getMessage());
         }
         return result;
+    }
+
+    /**
+     * Private Nachricht an einen Spieler senden
+     *
+     * @param player  Spieler, der die Nachricht sendet
+     * @param reciver Spieler, der die Nachricht bekommt
+     * @param message Nachricht, die der Spieler versendet
+     */
+    public void sendMsg(ProxiedPlayer player, ProxiedPlayer reciver, String message) {
+        try {
+            PreparedStatement statement = plugin.database.getConnection().prepareStatement("INSERT `tmczFriendsMessages` SET `sender` = ?, `reciver` = ?, `msg` = ?;");
+            statement.setString(1, player.getDisplayName());
+            statement.setString(2, reciver.getDisplayName());
+            statement.setString(3, message);
+            statement.executeUpdate();
+            statement.close();
+            player.sendMessage(plugin.formatFriendsChat("Du", reciver.getDisplayName(), message));
+            reciver.sendMessage(plugin.formatFriendsChat(player.getDisplayName(), "Dir", message));
+        } catch (Exception e) {
+
+        }
     }
 }

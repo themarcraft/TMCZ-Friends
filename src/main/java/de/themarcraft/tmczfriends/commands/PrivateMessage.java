@@ -37,15 +37,17 @@ public class PrivateMessage extends Command implements TabExecutor {
         } else {
             try {
                 ProxiedPlayer reciver = plugin.getProxy().getPlayer(args[0]);
-                String message = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
-                PreparedStatement statement = plugin.database.getConnection().prepareStatement("INSERT `tmczFriendsMessages` SET `sender` = ?, `reciver` = ?, `msg` = ?;");
-                statement.setString(1, player.getDisplayName());
-                statement.setString(2, reciver.getDisplayName());
-                statement.setString(3, message);
-                statement.executeUpdate();
-                statement.close();
-                player.sendMessage(plugin.formatFriendsChat("Du", reciver.getDisplayName(), message));
-                reciver.sendMessage(plugin.formatFriendsChat(player.getDisplayName(), "Dir", message));
+                if (plugin.database.getMessageSetting(reciver.getDisplayName()) == 0) {
+                    plugin.playerSendFriendMessage(player, "Dieser Spieler empfängt keine Nachrichten");
+                } else if (plugin.database.getMessageSetting(reciver.getDisplayName()) == 1) {
+                    if (plugin.friend.isFriend(player.getDisplayName(), reciver.getDisplayName())) {
+                        plugin.friend.sendMsg(player, plugin.getProxy().getPlayer(args[0]), String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
+                    } else {
+                        plugin.friend.plugin.playerSendFriendMessage(player, "Dieser Spieler empfängt nur Nachrichten von Freunden");
+                    }
+                } else {
+                    plugin.friend.sendMsg(player, plugin.getProxy().getPlayer(args[0]), String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
+                }
             } catch (Exception e) {
                 plugin.playerSendFriendMessage(player, "&cDer Spieler ist Offline");
             }

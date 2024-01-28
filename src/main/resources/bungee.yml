@@ -1,3 +1,4 @@
 name: TMCZ-Friends
 version: '${project.version}'
 main: de.themarcraft.tmczfriends.Main
+author: 'Marvin Niermann'
