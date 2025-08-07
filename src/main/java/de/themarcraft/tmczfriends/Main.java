@@ -25,7 +25,7 @@ import java.sql.SQLException;
  * Main Klasse des Plugins. Dies Enth&auml;lt viele Funktionen, die man h&auml;ufiger mal braucht und registriert auch Befehle und Listener
  *
  * @author Marvin Niermann
- * @version 1.0-Snapshot
+ * @version 1.1-Snapshot
  */
 
 public final class Main extends Plugin {
@@ -65,16 +65,16 @@ public final class Main extends Plugin {
 
     @Override
     public void onEnable() {
-        try {
-            String result = sendGetRequest("http://tmcz.grasshopper-design.de/plugins/tmcz-friends/");
-            if (!result.contains("\"tmcz-friends\" : true")) {
+        /*try {
+            String result = sendGetRequest("https://check.tmcz.de/?s=friends");
+            if (!result.contains("\"tmcz-friends-free\":true")) {
                 throw new RuntimeException("Fehler bei der Verifizierung");
             } else {
                 beforeLog("Plugin wird gestartet");
             }
         } catch (IOException e) {
             throw new RuntimeException("Fehler bei der Verifizierung");
-        }
+        }*/
 
         try {
             makeConfig();
@@ -96,7 +96,7 @@ public final class Main extends Plugin {
                 configuration.set("config.database.host", "127.0.0.1");
             }
             if (configuration.get("config.database.database") == null) {
-                configuration.set("config.database.database", "tmcz-friends");
+                configuration.set("config.database.database", "tmcz_friends");
             }
             if (configuration.get("config.database.user") == null) {
                 configuration.set("config.database.user", "root");
@@ -161,6 +161,10 @@ public final class Main extends Plugin {
 
     public void log(String msg) {
         getLogger().info(getPrefix() + ChatColor.translateAlternateColorCodes('&', msg));
+    }
+
+    public void log2(String msg) {
+        getLogger().info(getPrefix() + msg);
     }
 
     public void beforeLog(String msg) {

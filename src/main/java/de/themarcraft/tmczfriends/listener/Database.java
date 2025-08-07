@@ -40,9 +40,9 @@ public class Database {
 
         //Create the player_stats table
         String createMessagingSystem = "CREATE TABLE IF NOT EXISTS `tmczFriendsMessages` (`id` INT NOT NULL AUTO_INCREMENT , PRIMARY KEY (`id`),`sender` VARCHAR(255),`reciver` VARCHAR(255), `msg` VARCHAR(255) NUlL) ENGINE = InnoDB;";
-        String createPlayerSettings = "CREATE TABLE IF NOT EXISTS `tmczFriendsSettings` (`player` varchar(255) NOT NULL, `replyType` tinyint(1) NOT NULL COMMENT 'false = ReplyToRecive, true = replyToSend', `friendJoinLeave` tinyint(1) NOT NULL DEFAULT 1, `friendSwitch` tinyint(1) NOT NULL DEFAULT 1, `visibility` tinyint(1) NOT NULL DEFAULT 2 COMMENT '0 = Keiner, 1 = Freunde, 2 = Jeder', PRIMARY KEY (`player`), UNIQUE KEY `player` (`player`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;\n";
+        String createPlayerSettings = "CREATE TABLE IF NOT EXISTS `tmczFriendsSettings` (`player` varchar(255) NOT NULL, `replyType` tinyint(1) NOT NULL COMMENT 'false = ReplyToRecive, true = replyToSend', `friendJoinLeave` tinyint(1) NOT NULL DEFAULT 1, `friendSwitch` tinyint(1) NOT NULL DEFAULT 1, `msg` tinyint(1) NOT NULL DEFAULT 2 COMMENT '0 = Keiner, 1 = Freunde, 2 = Jeder', PRIMARY KEY (`player`), UNIQUE KEY `player` (`player`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;";
         String createFriendsList = "CREATE TABLE IF NOT EXISTS `tmczFriendsFriends` (`player` varchar(255) NOT NULL, `friends` text DEFAULT NULL, `lastOnline` TIMESTAMP NULL DEFAULT NULL, UNIQUE KEY `player` (`player`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;";
-        String createRequestList = "CREATE TABLE IF NOT EXISTS `tmczFriendsRequests` (`id` INT(255) NOT NULL AUTO_INCREMENT, `player` VARCHAR(255) NOT NULL, `receiver` VARCHAR(255) NOT NULL, PRIMARY KEY (`id`), UNIQUE KEY `id` (`id`)) ENGINE=InnoDB;";
+        String createRequestList = "CREATE TABLE IF NOT EXISTS `tmczFriendsRequests` (`id` INT(255) NOT NULL AUTO_INCREMENT, `player` VARCHAR(255) NOT NULL, `reciver` VARCHAR(255) NOT NULL, PRIMARY KEY (`id`), UNIQUE KEY `id` (`id`)) ENGINE=InnoDB;";
 
 
         statement.execute(createMessagingSystem);

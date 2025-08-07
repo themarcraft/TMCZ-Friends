@@ -20,6 +20,7 @@ public class PluginMessanger implements Listener {
 
     @EventHandler
     public void onPluginMessage(PluginMessageEvent event) {
+
         ByteArrayDataInput data;
         String subChannel;
         try {
@@ -28,39 +29,58 @@ public class PluginMessanger implements Listener {
         } catch (Exception e) {
             return;
         }
-        String player = data.readUTF();
-        String handle = data.readUTF();
 
-        switch (subChannel) {
-            case "remove":
-                plugin.friend.remove(player, handle);
-                sendUi(player);
-                break;
-            case "add":
-                plugin.friend.add(player, handle);
-                sendUi(player);
-                break;
-            case "refuse":
-                if (plugin.friend.refuse(player, handle)) {
-                    plugin.playerSendFriendMessage(plugin.getProxy().getPlayer(player), "Du hast erfolgreich die Freundschafts-Anfrage von " + ChatColor.AQUA + handle + ChatColor.GRAY + " abgelehnt");
-                } else {
-                    plugin.playerSendFriendMessage(plugin.getProxy().getPlayer(player), "Du hast von " + ChatColor.AQUA + handle + ChatColor.GRAY + " keine Freundschafts-Anfrage bekommen");
-                }
-                break;
-            case "accept":
-                if (plugin.friend.isRequest(player, handle) == 1) {
-                    plugin.friend.refuse(player, handle);
+        try {
+
+            String player;
+            String handle;
+
+            switch (subChannel) {
+                case "remove":
+                    player = data.readUTF();
+                    handle = data.readUTF();
+                    plugin.friend.remove(player, handle);
+                    sendUi(player);
+                    break;
+                case "add":
+                    player = data.readUTF();
+                    handle = data.readUTF();
                     plugin.friend.add(player, handle);
-                    plugin.playerSendFriendMessage(plugin.getProxy().getPlayer(player), "Du bist nun mit " + ChatColor.AQUA + handle + ChatColor.GRAY + " befreundet");
-                    try {
-                        plugin.playerSendFriendMessage(plugin.getProxy().getPlayer(handle), ChatColor.AQUA + player + ChatColor.GRAY + " hat deine Freundschafts-Anfrage angenommen");
-                    } catch (Exception e) {
-
+                    sendUi(player);
+                    break;
+                case "refuse":
+                    player = data.readUTF();
+                    handle = data.readUTF();
+                    if (plugin.friend.refuse(player, handle)) {
+                        plugin.playerSendFriendMessage(plugin.getProxy().getPlayer(player), "Du hast erfolgreich die Freundschafts-Anfrage von " + ChatColor.AQUA + handle + ChatColor.GRAY + " abgelehnt");
+                    } else {
+                        plugin.playerSendFriendMessage(plugin.getProxy().getPlayer(player), "Du hast von " + ChatColor.AQUA + handle + ChatColor.GRAY + " keine Freundschafts-Anfrage bekommen");
                     }
-                } else {
-                    plugin.playerSendFriendMessage(plugin.getProxy().getPlayer(player), ChatColor.AQUA + handle + ChatColor.GRAY + " hat dir keine Freundschafts-Anfrage geschickt");
-                }
-                break;
+                    break;
+                case "accept":
+                    player = data.readUTF();
+                    handle = data.readUTF();
+                    if (plugin.friend.isRequest(player, handle) == 1) {
+                        plugin.friend.refuse(player, handle);
+                        plugin.friend.add(player, handle);
+                        plugin.playerSendFriendMessage(plugin.getProxy().getPlayer(player), "Du bist nun mit " + ChatColor.AQUA + handle + ChatColor.GRAY + " befreundet");
+                        try {
+                            plugin.playerSendFriendMessage(plugin.getProxy().getPlayer(handle), ChatColor.AQUA + player + ChatColor.GRAY + " hat deine Freundschafts-Anfrage angenommen");
+                        } catch (Exception e) {
+
+                        }
+                    } else {
+                        plugin.playerSendFriendMessage(plugin.getProxy().getPlayer(player), ChatColor.AQUA + handle + ChatColor.GRAY + " hat dir keine Freundschafts-Anfrage geschickt");
+                    }
+                    break;
+            }
+        } catch (Exception e) {
+            plugin.log2("================================================");
+            plugin.log2("TMCZ - ERROR HANDLING");
+            plugin.log2(e.getMessage());
+            plugin.log2(e.getCause().getMessage());
+            plugin.log2(e.fillInStackTrace().toString());
+            plugin.log2("================================================");
         }
     }
 
@@ -94,7 +114,7 @@ public class PluginMessanger implements Listener {
             onlinePlayers = onlinePlayers + online.getDisplayName() + ",";
         }
         out.writeUTF(onlinePlayers);
-        
+
         out.writeUTF(plugin.database.getReplyType(player) + "");
         out.writeUTF(plugin.database.getMessageSetting(player) + "");
         out.writeUTF(plugin.database.getFriendJoinSetting(player) + "");

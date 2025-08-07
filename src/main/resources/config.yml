@@ -1,0 +1,14 @@
+config:
+  addon:
+    gui: false
+  prefix:
+    friends: "&b&lFREUNDE &8» &r"
+    log: "&a&lTheMarCraft.de &7» &r"
+  database:
+    host: "127.0.0.1"
+    database: "tmcz_friends"
+    user: "root"
+    passwd: "strongPassword##"
+  messages:
+    playerOnly: "&cDieser Befehl kann nur von einem Spieler ausgeführt werden"
+    invalidPlayer: "&cBitte gebe einen gültigen Spielernamen an"

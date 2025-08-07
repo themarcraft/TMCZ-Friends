@@ -58,19 +58,22 @@ public class Reply extends Command {
                             plugin.playerSendFriendMessage(player, "Dieser Spieler empfängt keine Nachrichten");
                         } else if (plugin.database.getMessageSetting(reciver.getDisplayName()) == 1) {
                             if (plugin.friend.isFriend(player.getDisplayName(), reciver.getDisplayName())) {
-                                plugin.friend.sendMsg(player, plugin.getProxy().getPlayer(args[0]), String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
+                                plugin.friend.sendMsg(player, reciver, String.join(" ", Arrays.copyOfRange(args, 0, args.length)));
                             } else {
                                 plugin.friend.plugin.playerSendFriendMessage(player, "Dieser Spieler empfängt nur Nachrichten von Freunden");
                             }
                         } else {
-                            plugin.friend.sendMsg(player, plugin.getProxy().getPlayer(args[0]), String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
+                            plugin.friend.sendMsg(player, reciver, String.join(" ", Arrays.copyOfRange(args, 0, args.length)));
                         }
                     } catch (Exception e) {
+                        plugin.log("E1: " + e.getMessage());
                         plugin.playerSendFriendMessage(player, "&cDer Spieler ist Offline");
                     }
                 }
+                resultSet.close();
                 statement.close();
             } catch (SQLException e) {
+                plugin.log("E2: " + e.getMessage());
                 plugin.playerSendFriendMessage(player, "&cBitte gebe eine Nachricht an");
             }
 

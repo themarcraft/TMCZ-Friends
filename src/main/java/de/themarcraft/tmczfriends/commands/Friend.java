@@ -746,7 +746,7 @@ public class Friend extends Command implements TabExecutor {
             player.sendMessage(plugin.formatFriendsChat("Du", reciver.getDisplayName(), message));
             reciver.sendMessage(plugin.formatFriendsChat(player.getDisplayName(), "Dir", message));
         } catch (Exception e) {
-
+            plugin.log("E1: " + e.getMessage());
         }
     }
 }

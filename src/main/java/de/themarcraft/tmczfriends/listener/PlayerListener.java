@@ -33,8 +33,11 @@ public class PlayerListener implements Listener {
             if (plugin.friend.getRequestsInt(player.getDisplayName()) != 0) {
                 plugin.playerSendFriendMessage(player, "Du hast " + plugin.friend.getRequestsInt(player.getDisplayName()) + " offene Freundschafts-Anfragen");
             }
-
-            PreparedStatement save2 = plugin.database.getConnection().prepareStatement("INSERT INTO `tmczFriendsSettings` (`player`, `friendSwitch`, `friendJoin`, `replyType`, `msg`) VALUES (?, ?, ?, ?);");
+        } catch (SQLException e) {
+            plugin.log("E1: " + e.getMessage());
+        }
+        try {
+            PreparedStatement save2 = plugin.database.getConnection().prepareStatement("INSERT INTO `tmczFriendsSettings` (`player`, `friendSwitch`, `friendJoinLeave`, `replyType`, `msg`) VALUES (?, ?, ?, ?, ?);");
             save2.setString(1, player.getDisplayName());
             save2.setInt(2, 0);
             save2.setInt(3, 0);
@@ -43,7 +46,7 @@ public class PlayerListener implements Listener {
             save2.executeUpdate();
             save2.close();
         } catch (SQLException e) {
-            plugin.log(e.getMessage());
+            plugin.log("E1.1: " + e.getMessage());
         }
         try {
             String[] freunde = plugin.friend.getFriends(player.getDisplayName()).split(",");
@@ -59,7 +62,7 @@ public class PlayerListener implements Listener {
                 plugin.log(s);
             }
         } catch (Exception e) {
-            plugin.log(e.getMessage());
+            plugin.log("E2: " + e.getMessage());
         }
     }
 
