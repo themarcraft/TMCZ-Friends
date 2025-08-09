@@ -32,6 +32,8 @@
 * /freunde anfragen - Siehe dir offene Anfragen an, die du bekommen hast.
 * /freunde freunde - Siehe dir deine Freunde an.
 
+   
+
 ## Permissions
 
 * /freunde - themarcraft.friends
