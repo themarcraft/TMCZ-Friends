@@ -22,13 +22,10 @@
 * /r - Antworte auf Eingehende Private Nachrichten oder auf Ausgehende Nachrichten.
 * /freunde hinzufügen - Sende eine Freundschafts-Anfrage an einen Spieler.
 * /freunde annehmen/ablehnen - Nehme eine Freundschafts-Anfrage an oder lehne sie ab.
-* /freunde einstellungen antworten - Stelle ein, ob du auf einkommende Nachrichten Antwortest, oder ob du an die Person
-  schreibst, der du zuletzt geschrieben hast.
+* /freunde einstellungen antworten - Stelle ein, ob du auf einkommende Nachrichten Antwortest, oder ob du an die Person schreibst, der du zuletzt geschrieben hast.
 * /freunde einstellungen msg - Stelle ein, wer dir Private Nachrichten senden darf, alle, freunde oder niemand.
-* /freunde einstellungen freundeOnline - Stelle ein, ob du eine Benachrichtigung bekommst, wenn ein Freund den Server
-  betritt.
-* /freunde einstellungen freundeServerWechsel - Stelle ein, ob du eine Benachrichtigung bekommst, wenn ein Freund den
-  Server wechselt.
+* /freunde einstellungen freundeOnline - Stelle ein, ob du eine Benachrichtigung bekommst, wenn ein Freund den Server betritt.
+* /freunde einstellungen freundeServerWechsel - Stelle ein, ob du eine Benachrichtigung bekommst, wenn ein Freund den Server wechselt.
 * /freunde anfragen - Siehe dir offene Anfragen an, die du bekommen hast.
 * /freunde freunde - Siehe dir deine Freunde an.
 
