@@ -72,7 +72,7 @@ config:
 
 ## Offizielle Add-Ons
 
-### [TMCZ Friends GUI]('/projects/tmcz-friends-gui')
+#### [TMCZ Friends GUI]('/projects/tmcz-friends-gui')
 
 Dir sind die ganzen Befehle zu viel? - Das TMCZ Friends GUI vereinfacht die Einstellungen, annehmen und entfernen von
 Freunden, Ansehen von Freunden und noch vieles mehr!
