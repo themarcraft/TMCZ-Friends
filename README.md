@@ -4,17 +4,17 @@
 
 ## Funktionen
 
-* Serverübergreifender Privater Chat (
-  /msg).![https://v4.themarcraft.de/images/friends/msg.png](https://v4.themarcraft.de/images/friends/msg.png)
-* Benachrichtigung, wenn Spieler joint/server wechselt an
-  Freunde. ![https://v4.themarcraft.de/images/friends/stats.png](https://v4.themarcraft.de/images/friends/stats.png)
+* Serverübergreifender Privater Chat (/msg).
+  ![https://v4.themarcraft.de/images/friends/msg.png](https://v4.themarcraft.de/images/friends/msg.png)
+* Benachrichtigung, wenn Spieler joint/server wechselt an Freunde.
+  ![https://v4.themarcraft.de/images/friends/stats.png](https://v4.themarcraft.de/images/friends/stats.png)
 * Antworten auf Nachrichten (/reply).
 * Speicherung via SQL Datenbank.
 * Spieler Einstellungen (Benachrichtigung).
 * Intelligenter Tab Completer.
 * Einstellungen des Präfixes und anderen Nachrichten (Noch nicht ganz fertig).
-* Freundschafts-Anfragen interaktiv im Chat
-  annehmen. ![https://v4.themarcraft.de/images/friends/newrequest.png](https://v4.themarcraft.de/images/friends/newrequest.png)
+* Freundschafts-Anfragen interaktiv im Chat annehmen.
+  ![https://v4.themarcraft.de/images/friends/newrequest.png](https://v4.themarcraft.de/images/friends/newrequest.png)
 
 ## Befehle
 
@@ -42,13 +42,14 @@
 ## Intelligenter Tab Completer
 
 * Für jeden Befehl gibt es Tab Completer.
+
   ![https://v4.themarcraft.de/images/friends/autocomplete.png](https://v4.themarcraft.de/images/friends/autocomplete.png)
 * Wenn du was eingibst, zeigt der Tab Completer nur Sachen an, die deine Eingabe enthalten.
 * Bei /freunde hinzufügen werden Freunde nicht angezeigt.
 * Bei /freunde entfernen werden nur Freunde angezeigt, die du auch entfernen kannst.
 * Bei /freunde annehmen/ablehnen werden nur offene Freundschafts-Anfragen angezeigt.
-* Bei /freunde einstellungen werden für die jeweilige Einstellung verfügbare Werte
-  angezeigt. ![https://v4.themarcraft.de/images/friends/autocomplete2.png](https://v4.themarcraft.de/images/friends/autocomplete2.png)
+* Bei /freunde einstellungen werden für die jeweilige Einstellung verfügbare Werte angezeigt.
+  ![https://v4.themarcraft.de/images/friends/autocomplete2.png](https://v4.themarcraft.de/images/friends/autocomplete2.png)
 
 ## Config.yml
 
