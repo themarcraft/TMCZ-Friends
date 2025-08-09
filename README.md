@@ -42,7 +42,6 @@
 ## Intelligenter Tab Completer
 
 * Für jeden Befehl gibt es Tab Completer.
-
   ![https://v4.themarcraft.de/images/friends/autocomplete.png](https://v4.themarcraft.de/images/friends/autocomplete.png)
 * Wenn du was eingibst, zeigt der Tab Completer nur Sachen an, die deine Eingabe enthalten.
 * Bei /freunde hinzufügen werden Freunde nicht angezeigt.
